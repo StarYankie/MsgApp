@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Messages app</title>
+        <style>
+            [v-cloak] {display: none;}
+            body > div {width: 500px; margin: 0 auto;}
+            textarea {width: 100%;}
+            ul {padding: 0 15px;}
+        </style>
+    </head>
+    <body>
+        <div id="app" v-cloak>
+            <message-list :items="messages" @delete="deleteMessage"></message-list>
+            <form v-on:submit.prevent="addMessage">
+                <textarea v-model="newMessage" placeholder="Leave a message">
+                </textarea>
+                <div>
+                    <button :disabled="addDisabled" type="submit">Add</button></div>
+            </form>
+        </div>
+        <script src = "https://unpkg.com/vue@2.5.13/dist/vue.js"></script>
+        <script type="module">
+            import MessageList from './components/MessageList.js';
+            import './directives/focus.directive.js';
+            import './filters/datetime.filter.js';
+            import LifecycleLogger from './mixins/lifecycle-logger.mixin.js';
+
+            let vm = new Vue({
+                name: 'MessagesApp',
+                el: '#app',
+                data: {
+                    messages: [],
+                    newMessage: ''
+                },
+                computed: {
+                    addDisabled () {
+                        return this.messages.length >= 10 || this.newMessage.length > 50;
+                    }
+                },
+                methods: {
+                    addMessage (event) {
+                        if (!this.newMessage) {return;}
+                        let now = new Date;
+                        this.messages.push({
+                            id: now.getTime(), text: this.newMessage, createdAt: now });
+                        this.newMessage = '';
+                    },
+                    deleteMessage (message) {
+                        this.messages.splice(this.messages.indexOf(message), 1)
+                    }
+                },
+                components: {
+                    MessageList
+                },
+            });
+            Vue.use(LifecycleLogger, { beforeMount: false })
+        </script>
+    </body>
+</html>
