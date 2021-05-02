@@ -23,9 +23,7 @@ public class MessageController {
     @PostMapping("/messages")
     @ResponseBody
     public ResponseEntity<Message> saveMessage(@RequestBody MessageData data) {
-        System.out.println("으악@@@@@@@");
         Message saved = messageService.save(data.getText());
-        System.out.println("으악!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
         if (saved == null) {
             return ResponseEntity.status(500).build();
         }
